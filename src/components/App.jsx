@@ -11,8 +11,19 @@ function App() {
   // Fetch all toys on component mount
   useEffect(() => {
     fetch("http://localhost:3001/toys")
-      .then((response) => response.json())
-      .then((data) => setToys(data));
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setToys(Array.isArray(data) ? data : []);
+      })
+      .catch((error) => {
+        console.error("Error fetching toys:", error);
+        setToys([]);
+      });
   }, []);
 
   function handleClick() {
